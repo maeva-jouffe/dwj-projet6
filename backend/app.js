@@ -1,14 +1,17 @@
+//Importation des modules de base
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-//Modules pour la sécurité
+//Importation des modules pour la sécurité
 const dotenv = require('dotenv').config();
-const urlMasquee = process.env.MONGODB_URL;
+const urlConnexionMongoDB = process.env.MONGODB_URL;
+const cleCookieSession = process.env.COOKIE_SESSION_CLE;
 const mongoSanitize = require('express-mongo-sanitize');
+const cookieSession = require('cookie-session');
 
-//Paramètres des routes
+//Importation des routeurs
 const sauceRoutes = require('./routes/sauces')
 const userRoutes = require('./routes/user');
 
@@ -16,7 +19,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 
 //connexion à la base de données
-mongoose.connect(urlMasquee,
+mongoose.connect(urlConnexionMongoDB,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -30,20 +33,26 @@ app.use((req, res, next) => {
     next();
   });
 
+//Creation d'un cookie de session
+app.use(cookieSession({
+  name: 'session',
+  secret: cleCookieSession,
+  domain : "http://localhost:3000",
+  httpOnly : true,
+  secure: false,
+}))
+
+//Transformation du corps de la requête en objet JSON
 app.use(bodyParser.json());
 
 //Ajout du gestionnaire de routage pour rendre le dossier images statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-//Ajout du module mongoSanitize
+//Ajout du module mongoSanitize qui supprimera dans les requêtes tous les clés commençant par $
 app.use(mongoSanitize());
-
 
 //Routes
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
-
-
-
 
 module.exports = app;

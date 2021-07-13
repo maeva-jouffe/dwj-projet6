@@ -54,7 +54,7 @@ exports.getAllSauce = (req, res, next) => {
     .catch(error => res.status(400).json({error}));
 };
 
- // Like
+//Like
  exports.sauceLike = (req, res, next) => {
   const avis = req.body.like;
   switch(avis){
