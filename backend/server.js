@@ -1,6 +1,8 @@
+//Importation du package HTTP natif de Node 
 const http = require('http');
 const app = require('./app');
 
+//Renvoie un port valide(number ou chaine)
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -15,6 +17,7 @@ const normalizePort = val => {
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+//Recherche les erreurs ,les gère et les enregistre
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -35,8 +38,10 @@ const errorHandler = error => {
   }
 };
 
+//On crée le serveur
 const server = http.createServer(app);
 
+//Configuration du serveur pour qu'il écoute
 server.on('error', errorHandler);
 server.on('listening', () => {
   const address = server.address();

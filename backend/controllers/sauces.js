@@ -1,4 +1,5 @@
 const Sauce = require('../models/sauces');
+//Importation de 'file system' qui donne accès au système de fichier et qui permettra de supprimer les images
 const fs = require('fs');
 
 //Enregistrer une sauce
@@ -54,7 +55,7 @@ exports.getAllSauce = (req, res, next) => {
     .catch(error => res.status(400).json({error}));
 };
 
-//Like
+//Like et dislike
  exports.sauceLike = (req, res, next) => {
   const avis = req.body.like;
   switch(avis){
