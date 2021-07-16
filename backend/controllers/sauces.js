@@ -2,7 +2,7 @@ const Sauce = require('../models/sauces');
 //Importation de 'file system' qui donne accès au système de fichier et qui permettra de supprimer les images
 const fs = require('fs');
 
-//Enregistrer une sauce
+//Créer une sauce
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;

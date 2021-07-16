@@ -4,7 +4,7 @@ const sauceCtrl = require('../controllers/sauces');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
-//Enregistrer une sauce
+//Créer une sauce
 router.post('/', auth, multer, sauceCtrl.createSauce );
 
 //Modifier une sauce
