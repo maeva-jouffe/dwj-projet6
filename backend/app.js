@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 //Ajout du gestionnaire de routage pour rendre le dossier images statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-//Ajout du module mongoSanitize qui supprimera dans les requêtes tous les clés commençant par $
+//Ajout du module mongoSanitize qui supprimera dans les requêtes tous les clés commençant par $ et .
 app.use(mongoSanitize());
 
 //Ajout du module helmet qui configure les en-têtes HTTP
