@@ -26,7 +26,7 @@ const saucesSchema = mongoose.Schema({
         required: true,
         validate:{
             validator: function(value){
-                return /^[^@&()_$*€£`+=\/;?#]+$/.test(value);
+                return /^[^<>@&()_$*€£`+=\/;?#]+$/.test(value);
             },
             message: "Les caractères spéciaux ne sont pas autorisés"
         }},
