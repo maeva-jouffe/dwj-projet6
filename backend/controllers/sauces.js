@@ -17,7 +17,6 @@ exports.createSauce = (req, res, next) => {
       .catch(error => res.status(400).json({ error }));
 };
 
-
 //Modifier une sauce
 exports.modifySauce = (req, res, next) => {
   const token = req.headers.authorization.split(' ')[1];
@@ -25,7 +24,7 @@ exports.modifySauce = (req, res, next) => {
   const idUtilisateur = decodedToken.userId; 
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      if(req.body.userId != idUtilisateur){
+      if(sauce.userId != idUtilisateur){
         res.end("Erreur");
       }else{
         const filename = sauce.imageUrl.split("/images/")[1];
@@ -46,15 +45,21 @@ exports.modifySauce = (req, res, next) => {
 
 //Supprimer une sauce
 exports.deleteSauce = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, tokenMasque);
+  const idUtilisateur = decodedToken.userId; 
   Sauce.findOne({_id: req.params.id})
     .then(sauce => {
+      if(sauce.userId != idUtilisateur){
+        res.end("Erreur");
+      }else{
       const filename = sauce.imageUrl.split('/images')[1];
       fs.unlink(`images/${filename}`, () => {
         Sauce.deleteOne({ _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
         .catch(error => res.status(400).json({ error }));
       })
-    })
+    }})
     .catch(error => res.status(500).json({error})); 
 };
 
