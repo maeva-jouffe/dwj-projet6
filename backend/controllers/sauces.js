@@ -1,6 +1,8 @@
 const Sauce = require('../models/sauces');
 //Importation de 'file system' qui donne accès au système de fichier et qui permettra de supprimer les images
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+const tokenMasque = process.env.TOKEN;
 
 //Créer une sauce
 exports.createSauce = (req, res, next) => {
@@ -18,22 +20,28 @@ exports.createSauce = (req, res, next) => {
 
 //Modifier une sauce
 exports.modifySauce = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, tokenMasque);
+  const idUtilisateur = decodedToken.userId; 
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-    const filename = sauce.imageUrl.split("/images/")[1];
-    const sauceObject = req.file?{
+      if(req.body.userId != idUtilisateur){
+        res.end("Erreur");
+      }else{
+        const filename = sauce.imageUrl.split("/images/")[1];
+        const sauceObject = req.file?{
       ...fs.unlink(`images/${filename}`, () => {
-  }),
-  ...JSON.parse(req.body.sauce),
-  imageUrl: `${req.protocol}://${req.get("host")}/images/${
-  req.file.filename}`,
-  }: {...req.body,};
+      }),
+      ...JSON.parse(req.body.sauce),
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename}`,
+    }: {...req.body,};
     Sauce.updateOne(
       { _id: req.params.id },
       { ...sauceObject, _id: req.params.id }) 
         .then(() => res.status(200).json({ message: "Objet modifié !" }))
         .catch((error) => res.status(400).json({ error }));
-        });
+      }});
 };
 
 //Supprimer une sauce
